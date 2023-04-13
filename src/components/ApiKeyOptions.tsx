@@ -7,58 +7,56 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu'
+import { createApiKey } from '@/helpers/create-api-key'
+import { revokeApiKey } from '@/helpers/revoke-api-key'
+import { Loader2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { FC, useState } from 'react'
 import Button from '@/ui/Button'
 import { toast } from '@/ui/Toast'
-import { createApiKey } from '@/helpers/create-api-key'
-import { useRouter } from 'next/navigation'
-import { revokeApiKey } from '@/helpers/revoke-api-key'
-import { Loader2 } from 'lucide-react'
 
 interface ApiKeyOptionsProps {
-  apiKeyId: string
+  // passing of entire object not allowed due to date property not being serializable
   apiKeyKey: string
 }
 
-const ApiKeyOptions: FC<ApiKeyOptionsProps> = ({ apiKeyKey, apiKeyId }) => {
+const ApiKeyOptions: FC<ApiKeyOptionsProps> = ({ apiKeyKey }) => {
+  const router = useRouter()
   const [isCreatingNew, setIsCreatingNew] = useState<boolean>(false)
   const [isRevoking, setIsRevoking] = useState<boolean>(false)
-  const router = useRouter();
 
-    const createNewApiKey = async () => {
-        setIsCreatingNew(true)
-
-        try {
-            await revokeApiKey({keyId: apiKeyId})
-            await createApiKey()
-            router.refresh()
-        } catch (error) {
-            toast({
-                title: 'Error creating API key',
-                message: 'Please try again later',
-                type: 'error',
-            })
-        } finally {
-            setIsCreatingNew(false)
-        }
+  const createNewApiKey = async () => {
+    setIsCreatingNew(true)
+    try {
+      await revokeApiKey()
+      await createApiKey()
+      router.refresh()
+    } catch (error) {
+      toast({
+        title: 'Error creating new API key',
+        message: 'Please try again later.',
+        type: 'error',
+      })
+    } finally {
+      setIsCreatingNew(false)
     }
+  }
 
-    const revokeCurrentApiKey = async () => {
-        setIsRevoking(true)
-
-        try {
-            await revokeApiKey({keyId: apiKeyId})
-            router.refresh()
-        } catch (error) {
-            toast({
-                title: 'Error revoking API key',
-                message: 'Please try again later',
-                type: 'error',
-            })
-        } finally {
-            setIsRevoking(false)
-        }
+  const revokeCurrentApiKey = async () => {
+    setIsRevoking(true)
+    try {
+      await revokeApiKey()
+      router.refresh()
+    } catch (error) {
+      toast({
+        title: 'Error revoking your API key',
+        message: 'Please try again later.',
+        type: 'error',
+      })
+    } finally {
+      setIsRevoking(false)
     }
+  }
 
   return (
     <DropdownMenu>
