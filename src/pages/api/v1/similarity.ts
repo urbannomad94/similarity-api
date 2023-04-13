@@ -1,4 +1,4 @@
-import { cosineSimilarity } from '@/helpers/cosine-sim'
+import { cosineSimilarity } from '@/helpers/cosine-similarity'
 import { withMethods } from '@/lib/api-middlewares/with-methods'
 import { db } from '@/lib/db'
 import { openai } from '@/lib/openai'
